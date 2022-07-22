@@ -1,0 +1,17 @@
+# Docker workflows and helpers
+
+function dockrestart {
+    osascript -e 'quit app "Docker 2"'
+    open -a 'Docker 2'  
+}
+
+alias dockstart="open -a 'Docker 2'"
+
+function dockstop {
+
+
+    docker-compose stop
+    docker-compose rm -afv
+    docker system prune -af --volumes
+
+}

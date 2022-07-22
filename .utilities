@@ -1,0 +1,148 @@
+# General utilities for common tasks related to interacting with files and directories and developing code.
+
+## Development tools
+
+alias devserver="npm run devserver" # start a web development server
+
+alias von=". .venv/bin/activate" # turn on a python virtual environment
+
+alias term="source ~/.zshrc"
+
+## File management
+
+function clean {
+    # Strip a file of its metadata
+    # Example: clean meowski.jpg
+    # The clean file will be made in the same directory with _clean added
+
+    fileNameArray=("${(@s|.|)1}")
+     fileName=$fileNameArray[1]
+     extension=$fileNameArray[2]
+
+    exiftool -all= "$1" -o $fileName"_clean."$extension
+
+    open $fileName"_clean."$extension
+}
+
+function copy {
+    # arg1: the file or directory you want copied
+    # arg2: the full path you want it copied to, including the name of the file/directory itself. ie: ~/meowski_copy.jpg
+    # to do: make it so that if no arg2 is passed it is copied in the same directory with _copy attached
+    # to do: make the variables into just $1 and $2, no need for brace expansion
+
+    itemToCopy=("${(@s| |)1}")
+    theCopy=("${(@s| |)2}")
+
+    if [[ -d $itemToCopy ]]; then # if a directory
+        cp -R $itemToCopy $theCopy
+
+    elif [[ -f $itemToCopy ]]; then # if a file
+        cp $itemToCopy $theCopy
+
+    else
+        echo "Argument is not valid"
+        exit 1
+    fi
+
+}
+
+alias countfiles='find . -type f | wc -l' # counts all files in the current directory, including files in subdirectories. No argument needed. 
+
+alias deets="ls -lhactr" # list details, human readably, including hidden files, by creation time, with most recent at bottom
+
+alias delete="rm -fr "$1"" # delete a file or directory
+
+alias ls="ls -a"
+
+function make {
+    # Create new files, directories, and subdirectories.
+
+    # Create a new directory: "make test1"
+    # Create a new directory with a file inside it "make test2/hello.txt"
+    # Create a new file within an existing directory: "make test1/hi.txt"
+    # Create a new file in the current directory "make hello.txt"
+
+    for arg in "$@"; do
+        mkdir -p "$(dirname "$arg")"
+        mkdir -p "$arg"
+    done
+}
+
+alias mkdir="mkdir -p "$1"" # make a directory or subdirectory. In the case of a subdirectory, create the top level directory if it does not already exist. 
+
+## General app automation
+
+alias quit="killall "$1""
+
+alias size="du -sh" # display how big a file or directory is
+
+alias start="open -a"
+
+## Navigation
+
+alias et="cd ~" # go home
+
+alias helpers="cd ~/.helpers" # go to helper library
+
+alias lu="cd ~/lesbiansunited" # go to lesbians united web project
+
+alias sw="cd ~/mapmaking" # go to stonewall timeline web project
+
+function up {
+    # Move up through the directory tree 
+    # Default use without an argument will move up 1 position
+    # Example: "up"
+    # May optionally pass an integer argument to represent how many levels up you want to go
+    # Example: "up 3"
+
+        if [[ "$#" < 1 ]] # check whether an argument was passed (length of args list must be greater than 1)
+
+        then # if no arguments move up 1 level in the directory tree
+            cd ..
+
+        else # if an agument is present, move up the directory tree the number of positions specified by the argument
+            dirTree=""
+ 
+            for dir in {1..$1} # brace expansion array represents the number of directories, where each entry is a position in the directory tree  
+            
+                do
+                    dirTree="../$dirTree" # add one position for each entry in the array
+                
+                done
+                
+                cd $dirTree # move up the directory tree to the specified position
+        
+        fi
+    }
+
+## Network utilities
+
+function speed {
+    # Test network upload, download, and ping speeds and write the results to a log file
+    # Example: speed
+
+    output=$(speedtest)
+    date=$(date +%m"."%d"."%y"-"%H"."%M)
+    
+    echo $output
+    
+    (echo $output) > ~/.logs/network/"speedtest-""$date".txt 
+}
+
+alias ipprivate="ipconfig getifaddr en0"
+
+alias ippublic="ipinfo myip"
+
+function ipgeotest {
+    # IN PROGRESS
+    # Takes an unlimited number of IP addresses as arguments and returns their location data
+    # Also can take a text file of IP addresses as an argument and returns their location data
+
+    for arg in "$@"
+        do
+          var=$(ipinfo "$arg")
+          echo $var
+
+
+        done
+}

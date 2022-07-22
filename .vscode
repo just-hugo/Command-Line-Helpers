@@ -1,0 +1,19 @@
+# Visual Studio Code workflows and helpers. 
+
+function codeclose {
+    # closes all tabs
+    # due to VS Code quirks with Applescript the keyboard shortcut must be reproduced twice to take effect
+    
+    $(codesave)
+
+    osascript -e 'tell application "System Events" to tell process "Code" to keystroke "k" using command down'                  
+    osascript -e 'tell application "System Events" to tell process "Code" to keystroke "w" using command down'
+
+    osascript -e 'tell application "System Events" to tell process "Code" to keystroke "k" using command down'                  
+    osascript -e 'tell application "System Events" to tell process "Code" to keystroke "w" using command down'
+
+}
+
+function codesave {
+    osascript -e 'tell application "System Events" to keystroke "s" using {command down, option down}'                  
+}

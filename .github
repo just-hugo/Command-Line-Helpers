@@ -1,0 +1,102 @@
+# # # Git workflows and helpers
+
+alias main="git switch main"
+
+alias checkout="git checkout"
+
+function commit {
+    # Stage and commit all changed files with an optional commit message
+    # With a commit message: commit "optional commit message"
+    # Without a commit message: commit
+
+    git add .
+
+    if [ "$1" != "" ]; then # check if arg1 has been provided
+        # if arg1 is provided, use it as the commit message
+        git commit -m "$1"
+
+    else                       # if no arg1, use a generic commit message
+        git commit -m "update" # default commit message is `update`
+
+    fi # display status to verify outcome
+    git status
+}
+
+function commitpush {
+    # Stage, commit, and push all changed files
+    # To use with a commit message: push "this is a commit message"
+    # To use without a commit message: push
+
+    git add .
+
+    if [ "$1" != "" ]; then # check if arg1 has been provided
+        # if arg1 is provided, use it as the commit message
+        git commit -m "$1"
+
+    else # if no arg1, use a generic commit message
+        git commit -m "update"
+
+    fi # push all files
+    git push
+}
+
+alias continue="git rebase --continue"
+
+alias currentbranch="git branch --show-current"
+
+function deletebranch {
+    # Deletes a local git branch, regardless of merge status
+    # Takes one argument: the name of the branch
+    # Example use: deletebranch some_branch
+    git switch main
+    git branch -D "$1"
+}
+
+alias deleteremotebranch="git push -d origin "$1"" # Deletes a branch from the remote repository
+
+alias hardreset="git reset --hard origin/HEAD"
+
+alias makebranch="git checkout -b "$1""
+
+function makerepo {
+    # First manually go to github.com and make a new repository.
+    # arg 1 is the name of the repo you want to make
+
+    mkdir -p "$1"
+    git init "$1"
+    cd "$1"
+    git branch -M main
+    touch README.md
+    git add README.md
+    git commit -m "initial commit"
+    git remote add origin https://github.com/just-hugo/"$1".git
+    git push -u origin "main"
+
+}
+
+alias push="git push"
+
+alias pull="git pull"
+
+function rebase {
+
+    current_branch=$(currentbranch)
+    echo "Save and close tabs? y/n"
+    read closeTabs
+    if closeTabs="y"; then
+        $(codeclose)
+    fi
+    echo "Updating main branch"
+    git switch main
+    git pull
+    echo "Beginning rebase"
+    git switch $current_branch
+    git rebase main
+    echo "Force push to complete the rebase process"
+    git push -f
+    echo "Rebase complete!"
+}
+
+alias renamebranch="git branch -M "$1""
+
+alias uncommit="git reset --soft HEAD~1"
